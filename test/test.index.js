@@ -27,7 +27,7 @@ describe('index.js', function () {
     });
 
     it('.isPlain', function (done) {
-        var obj1 = {a:1};
+        var obj1 = {a: 1};
         var C = function () {
 
         };
@@ -67,6 +67,35 @@ describe('index.js', function () {
         expect(keys[0]).toEqual('a');
         expect(vals[0]).toEqual(1);
         done();
+    });
+
+    it('.define', function () {
+        var o = {};
+        var oc = null;
+
+        object.define(o, 'a', {
+            value: '1'
+        });
+
+        expect(o.a).toEqual('1');
+
+        object.define(o, {
+            b: {
+                value: 2
+            },
+            c: {
+                set: function (val) {
+                    oc = val;
+                },
+                get: function () {
+                    return oc;
+                },
+                writable: true
+            }
+        });
+
+        expect(o.b).toEqual(2);
+        expect(o.c).toEqual(null);
     });
 
     it('.map', function (done) {
@@ -242,5 +271,29 @@ describe('index.js', function () {
         expect(obj4.l.length).toBe(4);
 
         done();
+    });
+
+    it('.supply simple', function () {
+        var o1 = {a: 1};
+        var o2 = {a: 2, b: 3};
+        var o3 = object.supply(o1, o2);
+
+        expect(o3).toBe(o1);
+        expect(o3.a).toBe(1);
+        expect(o3.b).toBe(3);
+    });
+
+    it('.supply deep', function () {
+        var o1 = {a: {x: 1}, b: [1]};
+        var o2 = {a: {x: 2, y: 3}, b: [2, 3]};
+        var o3 = object.supply(true, o1, o2);
+
+        expect(o3).toBe(o1);
+        expect(o3.a).toBe(o1.a);
+        expect(o3.a.x).toBe(1);
+        expect(o3.a.y).toBe(3);
+        expect(o3.b).toBe(o1.b);
+        expect(o3.b[0]).toBe(1);
+        expect(o3.b[1]).toBe(3);
     });
 });
