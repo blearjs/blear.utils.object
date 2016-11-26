@@ -1,6 +1,11 @@
-'use strict';
+/**
+ * 对象相关
+ * @author 云淡然
+ * @updated 2016年11月26日15:47:34
+ */
 
-require('blear.polyfills.object');
+
+'use strict';
 
 var typeis = require('blear.utils.typeis');
 
