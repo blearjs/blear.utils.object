@@ -149,6 +149,7 @@ exports.map = function (obj, callback) {
  *
  * @example
  * object.filter({a:1, b:2}, cb:val, key);
+ * object.filter({a:1, b:2}, [key1, key2]);
  */
 exports.filter = function filter(obj, callback) {
     var obj2 = {};
