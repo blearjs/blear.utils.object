@@ -117,7 +117,7 @@ describe('index.js', function () {
         done();
     });
 
-    it('.filter', function (done) {
+    it('.filter:callback', function (done) {
         var obj1 = {
             a: 1,
             b: 2,
@@ -126,6 +126,25 @@ describe('index.js', function () {
         var obj2 = object.filter(obj1, function (item) {
             return item > 1;
         });
+        var keys = object.keys(obj2);
+
+        console.log(obj2);
+
+        expect(obj1).not.toBe(obj2);
+        expect(keys.length).toBe(2);
+        expect(obj2.b).toBe(2);
+        expect(obj2.c).toBe(3);
+
+        done();
+    });
+
+    it('.filter:array', function (done) {
+        var obj1 = {
+            a: 1,
+            b: 2,
+            c: 3
+        };
+        var obj2 = object.filter(obj1, ['b', 'c']);
         var keys = object.keys(obj2);
 
         console.log(obj2);

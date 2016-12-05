@@ -144,11 +144,28 @@ exports.map = function (obj, callback) {
 /**
  * 对象的 filter
  * @param obj {*} 待遍历对象
- * @param callback {Function} 遍历回调，返回 true 被筛选
+ * @param callback {Function|Array} 遍历回调或者是筛选数组，返回 true 被筛选
  * @returns {*}
+ *
+ * @example
+ * object.filter({a:1, b:2}, cb:val, key);
  */
 exports.filter = function filter(obj, callback) {
     var obj2 = {};
+
+    if (typeis.Array(callback)) {
+        var arr = callback;
+        var map = {};
+        var len = arr.length;
+
+        for (var i = 0; i < len; i++) {
+            map[arr[i]] = 1;
+        }
+
+        callback = function (val, key) {
+            return map[key];
+        };
+    }
 
     each(obj, function (key, val) {
         if (callback.call(val, val, key)) {
