@@ -315,4 +315,27 @@ describe('index.js', function () {
         expect(o3.b[0]).toBe(1);
         expect(o3.b[1]).toBe(3);
     });
+
+    it('.value', function () {
+        var o1 = {
+            a: {
+                b: {
+                    1: {
+                        eee: 2
+                    }
+                },
+                c: [{d: 2}]
+            }
+        };
+
+        expect(object.value(o1, 'a.b[1].eee')).toEqual(2);
+        expect(object.value(o1, 'a.b[1].eeee')).toEqual(undefined);
+        expect(object.value(o1, 'a.b[2].eee')).toEqual(undefined);
+        expect(object.value(o1, 'a.b[1]')).toEqual(o1.a.b[1]);
+        expect(object.value(o1, ['a', 'b', '1'])).toEqual(o1.a.b[1]);
+        expect(object.value(o1, ['a', 'b', '1', 'eee'])).toEqual(2);
+        expect(object.value(o1, ['a', 'b', '1', 'eeee'])).toEqual(undefined);
+        expect(object.value(o1, 'a.c[0]')).toEqual(o1.a.c[0]);
+        expect(object.value(o1, 'a.c[0].d')).toEqual(2);
+    });
 });

@@ -278,3 +278,73 @@ var supply = exports.supply = function supply(_deep, _source, _target) {
 
     return source;
 };
+
+
+/**
+ * 根据路径取值
+ * @param {Object} obj 对象
+ * @param {String|Array} path 路径
+ * @returns {*}
+ *
+ * @example
+ * object.value({a: 1}, 'a') === 1
+ * object.value({a: {b : 2}}, 'a.b') === 2
+ * object.value({a: {b : 2}}, ['a', 'b']) === 2
+ */
+exports.value = function (obj, path) {
+    var paths = [];
+
+    if (typeis.Array(path)) {
+        paths = path;
+    } else {
+        var point = '.';
+        var bracketStart = '[';
+        var bracketEnd = ']';
+        var start = 0;
+        var length = path.length;
+        var lastPath = '';
+        var push = function () {
+            if (lastPath) {
+                paths.push(lastPath);
+            }
+
+            lastPath = '';
+        };
+
+        while (start !== length) {
+            var char = path[start];
+
+            if (char === point) {
+                push();
+            } else if (char === bracketStart) {
+                push();
+            } else if (char === bracketEnd) {
+                //
+            } else {
+                lastPath += char;
+            }
+
+            start++;
+        }
+
+        push();
+    }
+
+    var i = 0;
+    var j = paths.length;
+    var ret;
+    var parent = obj;
+
+    for (; i < j; i++) {
+        var key = paths[i];
+
+        if (key in parent) {
+            ret = parent = parent[key];
+        } else {
+            ret = undefined;
+            break;
+        }
+    }
+
+    return ret;
+};
