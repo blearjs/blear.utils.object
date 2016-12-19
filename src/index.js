@@ -281,21 +281,19 @@ var supply = exports.supply = function supply(_deep, _source, _target) {
 
 
 /**
- * 根据路径取值
- * @param {Object} obj 对象
+ * 根据路径获取路径数组
  * @param {String|Array} path 路径
- * @returns {*}
+ * @returns {Array}
  *
  * @example
- * object.value({a: 1}, 'a') === 1
- * object.value({a: {b : 2}}, 'a.b') === 2
- * object.value({a: {b : 2}}, ['a', 'b']) === 2
+ * object.pathList('a.b.c');
+ * // => ['a', 'b', 'c']
  */
-exports.value = function (obj, path) {
-    var paths = [];
+var pathList = exports.pathList = function (path) {
+    var pathList = [];
 
     if (typeis.Array(path)) {
-        paths = path;
+        pathList = path;
     } else {
         var point = '.';
         var bracketStart = '[';
@@ -305,7 +303,7 @@ exports.value = function (obj, path) {
         var lastPath = '';
         var push = function () {
             if (lastPath) {
-                paths.push(lastPath);
+                pathList.push(lastPath);
             }
 
             lastPath = '';
@@ -330,13 +328,33 @@ exports.value = function (obj, path) {
         push();
     }
 
+    return pathList;
+};
+
+
+/**
+ * 根据路径取值
+ * @param {Object} obj 对象
+ * @param {String|Array} path 路径
+ * @returns {*}
+ *
+ * @example
+ * object.value({a: 1}, 'a')
+ * // => 1
+ * object.value({a: {b : 2}}, 'a.b')
+ * // => 2
+ * object.value({a: {b : 2}}, ['a', 'b'])
+ * // => 2
+ */
+exports.value = function (obj, path) {
+    var _pathList = pathList(path);
     var i = 0;
-    var j = paths.length;
+    var j = _pathList.length;
     var ret;
     var parent = obj;
 
     for (; i < j; i++) {
-        var key = paths[i];
+        var key = _pathList[i];
 
         if (key in parent) {
             ret = parent = parent[key];
