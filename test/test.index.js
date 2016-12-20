@@ -316,6 +316,21 @@ describe('index.js', function () {
         expect(o3.b[1]).toBe(3);
     });
 
+    it('.parsePath', function () {
+        expect(object.parsePath('a.b').join(' > ')).toEqual('a > b');
+        expect(object.parsePath('a.b["c"]').join(' > ')).toEqual('a > b > c');
+        expect(object.parsePath('a.b["c"].d').join(' > ')).toEqual('a > b > c > d');
+        expect(object.parsePath('a.b["c"]["d"]').join(' > ')).toEqual('a > b > c > d');
+        expect(object.parsePath('a.b["c"][1]').join(' > ')).toEqual('a > b > c > 1');
+        expect(object.parsePath('a.b["c"][1].d').join(' > ')).toEqual('a > b > c > 1 > d');
+        expect(object.parsePath('a.b["c"][1][2]').join(' > ')).toEqual('a > b > c > 1 > 2');
+        expect(object.parsePath('a.b["c"][1][2][3]').join(' > ')).toEqual('a > b > c > 1 > 2 > 3');
+        expect(object.parsePath('a.b["c"][1][2][3].d').join(' > ')).toEqual('a > b > c > 1 > 2 > 3 > d');
+        expect(object.parsePath('a.b["c"][1][2][3].d.e').join(' > ')).toEqual('a > b > c > 1 > 2 > 3 > d > e');
+        expect(object.parsePath('a.b["\'c"]').join(' > ')).toEqual('a > b > \'c');
+        expect(object.parsePath('a.b["\\"c"]').join(' > ')).toEqual('a > b > "c');
+    });
+
     it('.value', function () {
         var o1 = {
             a: {

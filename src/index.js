@@ -280,27 +280,42 @@ var supply = exports.supply = function supply(_deep, _source, _target) {
 };
 
 
+var isQuote = function (char) {
+    return char === "'" || char === '"';
+};
+var BRACKET_START = '[';
+var BRACKET_END = ']';
+var BACKSLASH = '\\';
+var POINT = '.';
+
+
 /**
  * 根据路径获取路径数组
  * @param {String|Array} path 路径
  * @returns {Array}
  *
  * @example
- * object.pathList('a.b.c');
+ * object.parsePath('a.b.c');
  * // => ['a', 'b', 'c']
  */
-var pathList = exports.pathList = function (path) {
+var parsePath = exports.parsePath = function (path) {
     var pathList = [];
 
     if (typeis.Array(path)) {
         pathList = path;
     } else {
-        var point = '.';
-        var bracketStart = '[';
-        var bracketEnd = ']';
-        var start = 0;
+        // [~~~]
+        var inBracket = false;
+        // .~~~
+        var inPoint = false;
+        // "~~~"
+        var inQuote = '';
+        // \~~~
+        var inEscape = false;
+        var current = 0;
         var length = path.length;
         var lastPath = '';
+        var lastChar = '';
         var push = function () {
             if (lastPath) {
                 pathList.push(lastPath);
@@ -309,20 +324,74 @@ var pathList = exports.pathList = function (path) {
             lastPath = '';
         };
 
-        while (start !== length) {
-            var char = path[start];
+        while (current !== length) {
+            var char = path[current];
 
-            if (char === point) {
-                push();
-            } else if (char === bracketStart) {
-                push();
-            } else if (char === bracketEnd) {
-                //
-            } else {
+            // [=> ~~
+            if (inBracket) {
+                // [=>"
+                if (!inQuote && isQuote(char)) {
+                    inQuote = char;
+                }
+                // ["~~ \=>~ ~~"]
+                else if (inEscape) {
+                    // ["~~ \=>" ~~"}
+                    if (char === inQuote) {
+                        lastPath = lastPath.slice(0, -1);
+                    }
+
+                    lastPath += char;
+                    inEscape = false;
+                }
+                // ["~~ =>"]
+                else if (inQuote == char) {
+                    inBracket = false;
+                    inQuote = '';
+                    current++;
+                    push();
+                }
+                // [00000 =>]
+                else if (!inQuote && char === BRACKET_END) {
+                    inBracket = false;
+                    push();
+                }
+                // ["~~ =>\ ~~"]
+                else if (char === BACKSLASH) {
+                    inEscape = true;
+                    lastPath += char;
+                } else {
+                    lastPath += char;
+                }
+            }
+            // .=> ~~
+            else if (inPoint) {
+                if (char === BRACKET_START) {
+                    inBracket = true;
+                    inPoint = false;
+                    push();
+                } else if (char === POINT) {
+                    inPoint = true;
+                    push();
+                } else {
+                    lastPath += char;
+                }
+            }
+            // =>.
+            else if (char === POINT) {
+                inPoint = true;
+            }
+            // =>[
+            else if (char === BRACKET_START) {
+                inBracket = true;
+            }
+            // =>~
+            else {
+                inPoint = true;
                 lastPath += char;
             }
 
-            start++;
+            current++;
+            lastChar = char;
         }
 
         push();
@@ -347,7 +416,7 @@ var pathList = exports.pathList = function (path) {
  * // => 2
  */
 exports.value = function (obj, path) {
-    var _pathList = pathList(path);
+    var _pathList = parsePath(path);
     var i = 0;
     var j = _pathList.length;
     var ret;
