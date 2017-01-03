@@ -331,7 +331,7 @@ describe('index.js', function () {
         expect(object.parsePath('a.b["\\"c"]').join(' > ')).toEqual('a > b > "c');
     });
 
-    it('.value', function () {
+    it('.get', function () {
         var o1 = {
             a: {
                 b: {
@@ -343,14 +343,30 @@ describe('index.js', function () {
             }
         };
 
-        expect(object.value(o1, 'a.b[1].eee')).toEqual(2);
-        expect(object.value(o1, 'a.b[1].eeee')).toEqual(undefined);
-        expect(object.value(o1, 'a.b[2].eee')).toEqual(undefined);
-        expect(object.value(o1, 'a.b[1]')).toEqual(o1.a.b[1]);
-        expect(object.value(o1, ['a', 'b', '1'])).toEqual(o1.a.b[1]);
-        expect(object.value(o1, ['a', 'b', '1', 'eee'])).toEqual(2);
-        expect(object.value(o1, ['a', 'b', '1', 'eeee'])).toEqual(undefined);
-        expect(object.value(o1, 'a.c[0]')).toEqual(o1.a.c[0]);
-        expect(object.value(o1, 'a.c[0].d')).toEqual(2);
+        expect(object.get(o1, 'a.b[1].eee')).toEqual(2);
+        expect(object.get(o1, 'a.b[1].eeee')).toEqual(undefined);
+        expect(object.get(o1, 'a.b[2].eee')).toEqual(undefined);
+        expect(object.get(o1, 'a.b[1]')).toEqual(o1.a.b[1]);
+        expect(object.get(o1, ['a', 'b', '1'])).toEqual(o1.a.b[1]);
+        expect(object.get(o1, ['a', 'b', '1', 'eee'])).toEqual(2);
+        expect(object.get(o1, ['a', 'b', '1', 'eeee'])).toEqual(undefined);
+        expect(object.get(o1, 'a.c[0]')).toEqual(o1.a.c[0]);
+        expect(object.get(o1, 'a.c[0].d')).toEqual(2);
+    });
+
+    it('.set', function () {
+        var o1 = {
+            a: {
+                b: {
+                    1: {
+                        eee: 2
+                    }
+                },
+                c: [{d: 2}]
+            }
+        };
+
+        object.set(o1, 'a.b[1].eee', 3);
+        expect(o1.a.b[1].eee).toEqual(3);
     });
 });

@@ -9,6 +9,13 @@
 
 var typeis = require('blear.utils.typeis');
 
+var randomVarible = (function () {
+    var id = 0;
+    return function () {
+        return '__' + id++ + '__';
+    };
+}());
+
 /**
  * 返回对象的键名
  * @param obj {object} 对象
@@ -401,6 +408,29 @@ var parsePath = exports.parsePath = function (path) {
 };
 
 
+var foundTarget = function (obj, path) {
+    var _pathList = parsePath(path);
+    var i = 0;
+    var j = _pathList.length;
+    var parent = obj;
+    var target = obj;
+
+    for (; i < j; i++) {
+        var key = _pathList[i];
+
+        if (key in parent) {
+            target = parent;
+        } else {
+            break;
+        }
+
+        parent = parent[key];
+    }
+
+    return {t: target, k: key};
+};
+
+
 /**
  * 根据路径取值
  * @param {Object} obj 对象
@@ -410,28 +440,34 @@ var parsePath = exports.parsePath = function (path) {
  * @example
  * object.value({a: 1}, 'a')
  * // => 1
- * object.value({a: {b : 2}}, 'a.b')
+ * object.value({a: {b: 2}}, 'a.b')
  * // => 2
- * object.value({a: {b : 2}}, ['a', 'b'])
+ * object.value({a: {b: 2}}, ['a', 'b'])
  * // => 2
  */
-exports.value = function (obj, path) {
-    var _pathList = parsePath(path);
-    var i = 0;
-    var j = _pathList.length;
-    var ret;
-    var parent = obj;
+exports.get = function (obj, path) {
+    var target = foundTarget(obj, path);
+    return target.t[target.k];
+};
 
-    for (; i < j; i++) {
-        var key = _pathList[i];
 
-        if (key in parent) {
-            ret = parent = parent[key];
-        } else {
-            ret = undefined;
-            break;
-        }
-    }
-
-    return ret;
+/**
+ * 根据路径设值
+ * @param {Object} obj 对象
+ * @param {String|Array} path 路径
+ * @param {*} val 值
+ * @returns {*}
+ *
+ * @example
+ * object.value({a: 1}, 'a', 2)
+ * // => {a: 2}
+ * object.value({a: {b: 2}}, 'a.b', 3)
+ * // => {a: {b: 3}}
+ * object.value({a: {b: 2}}, ['a', 'b'], 3)
+ * // => {a: {b: 3}}
+ */
+exports.set = function (obj, path, val) {
+    var target = foundTarget(obj, path);
+    target.t[target.k] = val;
+    return target.t;
 };
