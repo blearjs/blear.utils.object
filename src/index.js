@@ -9,12 +9,6 @@
 
 var typeis = require('blear.utils.typeis');
 
-var randomVarible = (function () {
-    var id = 0;
-    return function () {
-        return '__' + id++ + '__';
-    };
-}());
 
 /**
  * 返回对象的键名
