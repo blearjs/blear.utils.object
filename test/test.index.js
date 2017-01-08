@@ -94,8 +94,21 @@ describe('index.js', function () {
             }
         });
 
-        expect(o.b).toEqual(2);
-        expect(o.c).toEqual(null);
+        expect(o.b).toBe(2);
+        expect(o.c).toBe(null);
+        o.b = 3;
+        o.c = 4;
+        expect(o.b).toBe(3);
+        expect(o.c).toBe(4);
+
+        object.define(o, 'd', {
+            get: function () {
+                return 5;
+            }
+        });
+        expect(o.d).toBe(5);
+        o.d = 6;
+        expect(o.d).toBe(5);
     });
 
     it('.map', function (done) {
@@ -316,7 +329,7 @@ describe('index.js', function () {
         expect(o3.b[1]).toBe(3);
     });
 
-    it('.parsePath', function () {
+    it('.path', function () {
         expect(object.path('a.b').join(' > ')).toEqual('a > b');
         expect(object.path('a.b["c"]').join(' > ')).toEqual('a > b > c');
         expect(object.path('a.b["c"].d').join(' > ')).toEqual('a > b > c > d');

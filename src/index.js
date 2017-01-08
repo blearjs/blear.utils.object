@@ -94,6 +94,12 @@ var define = exports.define = function (obj, key, desc) {
     } else if (typeis.String(key)) {
         desc = supply(desc, defineDefaults);
 
+        if (desc.get && !desc.set) {
+            desc.set = function () {
+                // empty
+            };
+        }
+
         // 不能同时有 set 和 writable
         if (desc.set && desc.writable) {
             delete desc.writable;
