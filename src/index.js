@@ -296,10 +296,10 @@ var POINT = '.';
  * @returns {Array}
  *
  * @example
- * object.parsePath('a.b.c');
+ * object.path('a.b.c');
  * // => ['a', 'b', 'c']
  */
-var parsePath = exports.parsePath = function (path) {
+var parsePath = exports.path = function (path) {
     var pathList = [];
 
     if (typeis.Array(path)) {
