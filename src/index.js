@@ -432,11 +432,11 @@ var foundTarget = function (obj, path) {
  * @returns {*}
  *
  * @example
- * object.value({a: 1}, 'a')
+ * object.get({a: 1}, 'a')
  * // => 1
- * object.value({a: {b: 2}}, 'a.b')
+ * object.get({a: {b: 2}}, 'a.b')
  * // => 2
- * object.value({a: {b: 2}}, ['a', 'b'])
+ * object.get({a: {b: 2}}, ['a', 'b'])
  * // => 2
  */
 exports.get = function (obj, path) {
@@ -453,11 +453,11 @@ exports.get = function (obj, path) {
  * @returns {*}
  *
  * @example
- * object.value({a: 1}, 'a', 2)
+ * object.set({a: 1}, 'a', 2)
  * // => {a: 2}
- * object.value({a: {b: 2}}, 'a.b', 3)
+ * object.set({a: {b: 2}}, 'a.b', 3)
  * // => {a: {b: 3}}
- * object.value({a: {b: 2}}, ['a', 'b'], 3)
+ * object.set({a: {b: 2}}, ['a', 'b'], 3)
  * // => {a: {b: 3}}
  */
 exports.set = function (obj, path, val) {
