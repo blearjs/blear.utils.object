@@ -388,5 +388,8 @@ describe('index.js', function () {
 
         object.set(o1, 'a.b.e.f.g', 5);
         expect(o1.a.b.e.f.g).toBe(5);
+
+        object.set(o1, 'a.b[1].eee.fff.ggg.hhh.iii', 6);
+        expect(o1.a.b[1].eee.fff.ggg.hhh.iii).toEqual(6);
     });
 });

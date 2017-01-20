@@ -414,21 +414,30 @@ var parsePath = exports.path = function (path) {
  * @param path
  * @returns {{t: Object, k: String, p: Array}}
  */
-var foundTarget = function (obj, path) {
+var findTarget = function (obj, path) {
     var _pathList = parsePath(path);
     var i = 0;
     var j = _pathList.length;
     var parent = obj;
     var stack = [];
+    var last = obj;
 
     for (; i < j; i++) {
         var key = _pathList[i];
 
-        if (key in parent) {
-            parent = parent[key];
-            stack.push(parent);
-        } else {
-            stack.push(1);
+        try {
+            if (key in parent) {
+                last = parent;
+                parent = parent[key];
+                stack.push(parent);
+            } else {
+                stack.push(1);
+                break;
+            }
+        } catch (err) {
+            parent = last[_pathList[i - 1]] = {};
+            stack.pop();
+            stack.push(parent, 1);
             break;
         }
     }
@@ -453,7 +462,7 @@ var foundTarget = function (obj, path) {
  * // => 2
  */
 exports.get = function (obj, path) {
-    var target = foundTarget(obj, path);
+    var target = findTarget(obj, path);
     return target.t[target.k];
 };
 
@@ -474,7 +483,7 @@ exports.get = function (obj, path) {
  * // => {a: {b: 3}}
  */
 exports.set = function (obj, path, val) {
-    var target = foundTarget(obj, path);
+    var target = findTarget(obj, path);
     var parent = target.t;
     var key = target.k;
     var insertPath = target.p;
