@@ -408,26 +408,33 @@ var parsePath = exports.path = function (path) {
 };
 
 
+/**
+ * 找到对应目标
+ * @param obj
+ * @param path
+ * @returns {{t: Object, k: String, p: Array}}
+ */
 var foundTarget = function (obj, path) {
     var _pathList = parsePath(path);
     var i = 0;
     var j = _pathList.length;
     var parent = obj;
-    var target = obj;
+    var stack = [];
 
     for (; i < j; i++) {
         var key = _pathList[i];
 
         if (key in parent) {
-            target = parent;
+            parent = parent[key];
+            stack.push(parent);
         } else {
+            stack.push(1);
             break;
         }
-
-        parent = parent[key];
     }
 
-    return {t: target, k: key};
+    stack.pop();
+    return {t: stack.pop(), k: key, p: _pathList.slice(i)};
 };
 
 
@@ -468,6 +475,20 @@ exports.get = function (obj, path) {
  */
 exports.set = function (obj, path, val) {
     var target = foundTarget(obj, path);
-    target.t[target.k] = val;
+    var parent = target.t;
+    var key = target.k;
+    var insertPath = target.p;
+
+    if (insertPath.length) {
+        while (insertPath.length !== 1) {
+            key = insertPath.shift();
+            parent = parent[key] = {};
+        }
+
+        key = insertPath.pop();
+    }
+
+    parent[key] = val;
+
     return target.t;
 };

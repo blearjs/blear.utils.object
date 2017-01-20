@@ -363,6 +363,7 @@ describe('index.js', function () {
         expect(object.get(o1, ['a', 'b', '1'])).toEqual(o1.a.b[1]);
         expect(object.get(o1, ['a', 'b', '1', 'eee'])).toEqual(2);
         expect(object.get(o1, ['a', 'b', '1', 'eeee'])).toEqual(undefined);
+        expect(object.get(o1, ['a', 'b', '1', 'eeee', 'ffff'])).toEqual(undefined);
         expect(object.get(o1, 'a.c[0]')).toEqual(o1.a.c[0]);
         expect(object.get(o1, 'a.c[0].d')).toEqual(2);
     });
@@ -381,5 +382,11 @@ describe('index.js', function () {
 
         object.set(o1, 'a.b[1].eee', 3);
         expect(o1.a.b[1].eee).toEqual(3);
+
+        object.set(o1, 'a.b.d', 4);
+        expect(o1.a.b.d).toBe(4);
+
+        object.set(o1, 'a.b.e.f.g', 5);
+        expect(o1.a.b.e.f.g).toBe(5);
     });
 });
