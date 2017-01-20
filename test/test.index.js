@@ -356,6 +356,13 @@ describe('index.js', function () {
             }
         };
 
+        expect(object.get(o1, 'a')).toEqual(o1.a);
+        expect(object.get(o1, 'a.b')).toEqual(o1.a.b);
+        expect(object.get(o1, 'a.b.1')).toEqual(o1.a.b[1]);
+        expect(object.get(o1, 'a.b.1.eee')).toEqual(o1.a.b[1].eee);
+        expect(object.get(o1, 'a.b.1.eee.fff')).toEqual(undefined);
+        expect(object.get(o1, 'a.b.1.eee.fff.ggg')).toEqual(undefined);
+        expect(object.get(o1, 'a.b.1.eee.fff.ggg.hhh')).toEqual(undefined);
         expect(object.get(o1, 'a.b[1].eee')).toEqual(2);
         expect(object.get(o1, 'a.b[1].eeee')).toEqual(undefined);
         expect(object.get(o1, 'a.b[2].eee')).toEqual(undefined);
@@ -391,5 +398,14 @@ describe('index.js', function () {
 
         object.set(o1, 'a.b[1].eee.fff.ggg.hhh.iii', 6);
         expect(o1.a.b[1].eee.fff.ggg.hhh.iii).toEqual(6);
+
+        object.set(o1, 'm', 7);
+        expect(o1.m).toBe(7);
+
+        object.set(o1, 'o.p', 8);
+        expect(o1.o.p).toBe(8);
+
+        object.set(o1, 'r.s.t', 9);
+        expect(o1.r.s.t).toBe(9);
     });
 });

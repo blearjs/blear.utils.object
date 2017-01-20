@@ -412,38 +412,51 @@ var parsePath = exports.path = function (path) {
  * 找到对应目标
  * @param obj
  * @param path
+ * @param isSet
  * @returns {{t: Object, k: String, p: Array}}
  */
-var findTarget = function (obj, path) {
+var findTarget = function (obj, path, isSet) {
     var _pathList = parsePath(path);
     var i = 0;
     var j = _pathList.length;
-    var parent = obj;
     var stack = [];
-    var last = obj;
+    var parent = obj;
+    var lastParent = obj;
+    var hasBreak = false;
+    var key = '';
+    var lastKey = '';
 
     for (; i < j; i++) {
-        var key = _pathList[i];
+        key = _pathList[i];
 
         try {
             if (key in parent) {
-                last = parent;
-                parent = parent[key];
+                lastParent = parent;
                 stack.push(parent);
+                parent = parent[key];
             } else {
-                stack.push(1);
+                hasBreak = true;
+                stack.push(parent);
                 break;
             }
         } catch (err) {
-            // 如果目标无法 in 操作，则初始化为 {}
-            parent = last[_pathList[i - 1]] = {};
-            stack.pop();
-            stack.push(parent, 1);
+            if (isSet) {
+                // 如果目标无法 in 操作，则初始化为 {}
+                parent = lastParent[lastKey] = {};
+                stack.push(parent);
+            }
+
+            hasBreak = true;
             break;
         }
+
+        lastKey = key;
     }
 
-    stack.pop();
+    // if (hasBreak) {
+    //     stack.pop();
+    // }
+
     return {t: stack.pop(), k: key, p: _pathList.slice(i)};
 };
 
@@ -484,7 +497,7 @@ exports.get = function (obj, path) {
  * // => {a: {b: 3}}
  */
 exports.set = function (obj, path, val) {
-    var target = findTarget(obj, path);
+    var target = findTarget(obj, path, true);
     var parent = target.t;
     var key = target.k;
     var insertPath = target.p;
