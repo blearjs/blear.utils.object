@@ -435,6 +435,7 @@ var findTarget = function (obj, path) {
                 break;
             }
         } catch (err) {
+            // 如果目标无法 in 操作，则初始化为 {}
             parent = last[_pathList[i - 1]] = {};
             stack.pop();
             stack.push(parent, 1);
