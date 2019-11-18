@@ -77,7 +77,10 @@ describe('index.js', function () {
             value: '1'
         });
 
-        expect(o.a).toEqual('1');
+        expect(o.a).toBe('1');
+
+        object.define(o, 'b', 2);
+        expect(o.b).toBe(2);
 
         object.define(o, {
             b: {

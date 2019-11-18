@@ -37,8 +37,7 @@ exports.isPlain = function (obj) {
                 return false;
             }
         }
-    }
-    catch (e) {
+    } catch (e) {
         /* istanbul ignore next */
         return false;
     }
@@ -92,6 +91,10 @@ var define = exports.define = function (obj, key, desc) {
             define(obj, _key, _desc);
         });
     } else if (typeis.String(key)) {
+        if (!typeis.Object(desc)) {
+            desc = {value: desc};
+        }
+
         desc = supply(desc, defineDefaults);
 
         if (desc.get && !desc.set) {
